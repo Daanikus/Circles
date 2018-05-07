@@ -33,7 +33,8 @@ def generate(circle, colour):
             temp = Circle(center, r_small)
             temp.setFill(colour)
             circles.append(temp)
-    list_length = len(circles)
+    draw_circles(circles)
+    sleep(0.4)
     return circles
 
 
@@ -43,7 +44,7 @@ def draw_circles(circles):
     count = 0
     for c in circles:
         c.draw(win)
-        #sleep(.3)
+       # sleep(.3)
         count = count + 1
     print(f"{count} circles drawn")
 
@@ -64,21 +65,24 @@ colours = ["red", "blue", "green", "yellow", "orange", "cyan"]
 ratio = 3
 r = 500
 screen_size = r * 2
-layers = 4
+layers = 5
+NUM_CIRCLES = 7
 
 # Display window
 win = GraphWin("Circles", screen_size, screen_size)
 
 # Create initial circle in list
-circles = [Circle(Point(r, r), r)]
-
+initial_circle = Circle(Point(r, r), r)
+initial_circle.setFill(rand_colour())
+circles = [initial_circle]
+draw_circles(circles)
 for i in range(0, layers):
     col = rand_colour()
-    for j in range(len(circles) - (7**i), len(circles)):
+    for j in range(len(circles) - (NUM_CIRCLES**i), len(circles)):
         circles.extend(generate(circles[j], col))
 
 run_time = time.time()
-draw_circles(circles)
+#draw_circles(circles)
 run_time = time.time() - run_time
 print(f"Completed in {run_time} seconds")
 win.getMouse()
