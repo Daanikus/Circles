@@ -4,10 +4,6 @@ from math import sin, cos
 import random
 
 
-# Global colour values
-colours = ["red", "blue", "green", "yellow", "orange", "cyan"]
-ratio = 3
-
 def generate(circle, colour):
     circles = []
     r_small = circle.radius / ratio
@@ -40,16 +36,20 @@ def generate(circle, colour):
     list_length = len(circles)
     return circles
 
+
 # Print all circles in resultant list of circles
-def draw_circles(circles, win):
+def draw_circles(circles):
+
     count = 0
     for c in circles:
         c.draw(win)
-        # sleep(.3)
+        #sleep(.3)
         count = count + 1
     print(f"{count} circles drawn")
 
+
 def rand_colour():
+
     return color_rgb(random.randint(0, 255),
                      random.randint(0, 255),
                      random.randint(0, 255))
@@ -57,32 +57,29 @@ def rand_colour():
 
 # --------- Begin ----------
 
+# Global colour values
+colours = ["red", "blue", "green", "yellow", "orange", "cyan"]
+
+# Defaults
+ratio = 3
 r = 500
 screen_size = r * 2
-layers = 5
-circles = []
+layers = 4
+
+# Display window
 win = GraphWin("Circles", screen_size, screen_size)
 
-
-initial_circle = Circle(Point(r, r), r)
-initial_circle.setFill(rand_colour())
-circles = [initial_circle]
+# Create initial circle in list
+circles = [Circle(Point(r, r), r)]
 
 for i in range(0, layers):
     col = rand_colour()
-    if i == 0:
-        circles.extend(generate(circles[i], col))
-    else:
-        # Only generate on the most recently generated circles to avoid duplicates
-        circles = circles[len(circles) - (7**i):len(circles)]
-        for j in range(0, len(circles)):
-            circles.extend(generate(circles[j], col))
-
+    for j in range(len(circles) - (7**i), len(circles)):
+        circles.extend(generate(circles[j], col))
 
 run_time = time.time()
-draw_circles(circles, win)
+draw_circles(circles)
 run_time = time.time() - run_time
 print(f"Completed in {run_time} seconds")
 win.getMouse()
 win.close()
-
