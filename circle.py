@@ -1,3 +1,4 @@
+import types
 from graphics import *
 from time import sleep
 from math import sin, cos
@@ -55,59 +56,79 @@ def draw_circles(circles):
     print(f"{count} circles drawn")
 
 
-def rand_colour():
-
-    return color_rgb(random.randint(0, 255),
-                     random.randint(0, 255),
-                     random.randint(0, 255))
-
-def run_default():
-    # Create initial circle in list
-    initial_circle = Circle(Point(r, r), r)
-    initial_circle.setFill(rand_colour())
-    circles = [initial_circle]
-    currCircles = circles
+def generate_colours():
+    colours = []
 
     for i in range(0, layers):
-        col = rand_colour()
+        c = color_rgb(random.randint(0, 255),
+                      random.randint(0, 255),
+                      random.randint(0, 255))
+        colours.append(c)
+    return colours
+
+def run(colours):
+    if not colours:
+        colours = generate_colours()
+
+    # Create initial circle in list
+    initial_circle = Circle(Point(r, r), r)
+    initial_circle.setFill(colours[0])
+    circles = [initial_circle]
+    curr_circles = circles
+    for i in range(0, layers):
         print(f"Generation {i}:")
-        draw_circles(currCircles)
-        sleep(2)
-        currCircles = []
+        draw_circles(curr_circles)
+        if i == layers - 1:
+            break
+        curr_circles = []
+
+        # sleep(1)
         for j in range(len(circles) - (NUM_CIRCLES**i), len(circles)):
-            currCircles.extend(generate(circles[j], col))
-        circles.extend(currCircles)
+            curr_circles.extend(generate(circles[j], colours[i+1]))
+        circles.extend(curr_circles)
+
+
+
+
+def has_stdin():
+    return not sys.stdin.isatty()
 
 
 # --------- Begin ----------
 
-# Welcome message and usage info
+
 print("Welcome to Circles")
 
+# Set up command line args
 parser = argparse.ArgumentParser()
 parser.add_argument("-g", "--generation", default="3", help="set number of generations", type=int)
 args = parser.parse_args()
 layers = args.generation
-print(f"Running {args.generation} generations")
+
+
 ratios = []
 colours = []
-for line in sys.stdin:
-    line = line.strip().split(" ")
-    ratios.append(line[0]);
-    colours.append(color_rgb(int(line[1]), int(line[2]), int(line[3])))
+if has_stdin():
+    count = 0
+    print("Running with input file. -g flag will be ignored, if specified")
+    for line in sys.stdin:
+        line = line.strip().split(" ")
+        ratios.append(line[0])
+        colours.append(color_rgb(int(line[1]), int(line[2]), int(line[3])))
+        count = count + 1
+    layers = count
+else:
+    print("Running with defaults")
 
+print(f"Running {layers} generations")
 print(ratios)
-print(colours)
-
-sleep(2)
-# exit()
 
 # Display window
 win = GraphWin("Circles", screen_size, screen_size)
 
 run_time = time.time()
 
-run_default()
+run(colours)
 
 run_time = time.time() - run_time
 print(f"Completed in {run_time} seconds")
