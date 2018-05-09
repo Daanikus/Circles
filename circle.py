@@ -1,7 +1,15 @@
 from graphics import *
 from time import sleep
 from math import sin, cos
+import argparse
 import random
+import sys
+
+# Defaults
+ratio = 3
+r = 300
+screen_size = r * 2
+NUM_CIRCLES = 7
 
 
 def generate(circle, colour):
@@ -33,8 +41,6 @@ def generate(circle, colour):
             temp = Circle(center, r_small)
             temp.setFill(colour)
             circles.append(temp)
-    draw_circles(circles)
-    sleep(0.4)
     return circles
 
 
@@ -44,7 +50,7 @@ def draw_circles(circles):
     count = 0
     for c in circles:
         c.draw(win)
-       # sleep(.3)
+        #sleep(.3)
         count = count + 1
     print(f"{count} circles drawn")
 
@@ -55,34 +61,54 @@ def rand_colour():
                      random.randint(0, 255),
                      random.randint(0, 255))
 
+def run_default():
+    # Create initial circle in list
+    initial_circle = Circle(Point(r, r), r)
+    initial_circle.setFill(rand_colour())
+    circles = [initial_circle]
+    currCircles = circles
+
+    for i in range(0, layers):
+        col = rand_colour()
+        print(f"Generation {i}:")
+        draw_circles(currCircles)
+        sleep(2)
+        currCircles = []
+        for j in range(len(circles) - (NUM_CIRCLES**i), len(circles)):
+            currCircles.extend(generate(circles[j], col))
+        circles.extend(currCircles)
+
 
 # --------- Begin ----------
 
-# Global colour values
-colours = ["red", "blue", "green", "yellow", "orange", "cyan"]
+# Welcome message and usage info
+print("Welcome to Circles")
 
-# Defaults
-ratio = 3
-r = 500
-screen_size = r * 2
-layers = 5
-NUM_CIRCLES = 7
+parser = argparse.ArgumentParser()
+parser.add_argument("-g", "--generation", default="3", help="set number of generations", type=int)
+args = parser.parse_args()
+layers = args.generation
+print(f"Running {args.generation} generations")
+ratios = []
+colours = []
+for line in sys.stdin:
+    line = line.strip().split(" ")
+    ratios.append(line[0]);
+    colours.append(color_rgb(int(line[1]), int(line[2]), int(line[3])))
+
+print(ratios)
+print(colours)
+
+sleep(2)
+# exit()
 
 # Display window
 win = GraphWin("Circles", screen_size, screen_size)
 
-# Create initial circle in list
-initial_circle = Circle(Point(r, r), r)
-initial_circle.setFill(rand_colour())
-circles = [initial_circle]
-draw_circles(circles)
-for i in range(0, layers):
-    col = rand_colour()
-    for j in range(len(circles) - (NUM_CIRCLES**i), len(circles)):
-        circles.extend(generate(circles[j], col))
-
 run_time = time.time()
-#draw_circles(circles)
+
+run_default()
+
 run_time = time.time() - run_time
 print(f"Completed in {run_time} seconds")
 win.getMouse()
