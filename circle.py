@@ -1,5 +1,5 @@
 # A comment your comment
-from graphics import *
+# A comment your comment
 from time import sleep
 from math import sin, cos
 import argparse
