@@ -1,4 +1,4 @@
-import types
+# A comment your comment
 from graphics import *
 from time import sleep
 from math import sin, cos
