@@ -16,7 +16,7 @@ ratios = []
 
 
 
-def generate(circle, colour):
+# A comment your comment
     circles = []
     r_small = circle.radius / ratio
     r2 = r_small * 2
@@ -150,4 +150,4 @@ print(f"Completed in {run_time} seconds")
 win.getMouse()
 win.close()
 
-# A comment your comment
+# A comment at the end
